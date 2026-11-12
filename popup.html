@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <style>
     body {
       width: 360px;
+      direction: rtl;
+      text-align: right;
       padding: 16px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       font-size: 14px;
@@ -183,91 +185,91 @@
   </style>
 </head>
 <body>
-  <h1>Libby Audiobook Downloader</h1>
+  <h1>מוריד ספרי שמע מ־Libby</h1>
 
   <div id="error" class="error hidden"></div>
 
   <div id="not-overdrive" class="hidden">
-    <p>Navigate to an Overdrive audiobook page to use this extension.</p>
-    <p style="font-size: 12px; color: #666;">Look for URLs like: <code>*.listen.overdrive.com</code> or <code>libbyapp.com/open/loan/...</code></p>
+    <p>כדי להשתמש בתוסף, יש לפתוח עמוד של ספר שמע ב־Libby או ב־OverDrive.</p>
+    <p style="font-size: 12px; color: #666;">כתובות העמוד המתאימות נראות כך: <code>*.listen.overdrive.com</code> or <code>libbyapp.com/open/loan/...</code></p>
   </div>
 
   <div id="setup-section">
     <div class="info-row">
-      <div class="info-label">Book Title</div>
-      <div class="info-value" id="book-title">Loading...</div>
+      <div class="info-label">שם הספר</div>
+      <div class="info-value" id="שם-הספר">טוען...</div>
     </div>
 
     <div class="info-row">
-      <div class="info-label">Duration</div>
+      <div class="info-label">משך הספר</div>
       <div class="info-value" id="book-duration">--</div>
     </div>
 
     <div class="info-row">
-      <div class="info-label">Expected Files</div>
+      <div class="info-label">מספר קבצים צפוי</div>
       <div class="info-value" id="expected-files">--</div>
     </div>
 
     <div class="info-row">
-      <div class="info-label">Download Folder Name</div>
-      <input type="text" id="folder-name" placeholder="book-title">
+      <div class="info-label">שם תיקיית ההורדה</div>
+      <input type="text" id="folder-name" placeholder="שם-הספר">
     </div>
 
-    <button id="start-btn" class="primary" disabled>Start Download</button>
+    <button id="start-btn" class="primary" disabled>התחלת הורדה</button>
   </div>
 
   <div id="progress-section" class="progress-section hidden">
-    <h2>Downloading...</h2>
+    <h2>ההורדה מתבצעת...</h2>
     <div class="stat">
-      <span class="stat-label">Files Downloaded</span>
+      <span class="stat-label">קבצים שהורדו</span>
       <span class="stat-value" id="file-count">0</span>
     </div>
     <div class="stat">
-      <span class="stat-label">Book Progress</span>
+      <span class="stat-label">התקדמות בספר</span>
       <span class="stat-value" id="book-progress">0%</span>
     </div>
     <p style="font-size: 11px; color: #666; margin-top: 12px;">
-      Progress is also shown on the page. You can close this popup.
+      ההתקדמות מוצגת גם בעמוד עצמו. אפשר לסגור את החלונית הזו.
     </p>
-    <button id="stop-btn" class="danger">Stop Download</button>
+    <button id="stop-btn" class="danger">עצירת ההורדה</button>
   </div>
 
   <div id="complete-section" class="hidden">
     <div class="progress-section" style="background: #e3f2fd;">
-      <h2 style="color: #1565c0;">Download Complete!</h2>
+      <h2 style="color: #1565c0;">ההורדה הושלמה!</h2>
       <div class="stat">
-        <span class="stat-label">Total Files</span>
+        <span class="stat-label">סך הקבצים</span>
         <span class="stat-value" id="total-files" style="color: #1565c0;">0</span>
       </div>
     </div>
 
     <div id="gap-section" class="hidden" style="background: #fff3e0; padding: 12px; border-radius: 8px; margin-top: 12px; border: 1px solid #ffe0b2;">
-      <h3 style="font-size: 13px; margin: 0 0 8px 0; color: #e65100;">⚠️ Missing Files</h3>
+      <h3 style="font-size: 13px; margin: 0 0 8px 0; color: #e65100;">⚠️ קבצים חסרים</h3>
       <pre id="missing-files-list" style="background: #fff; border: 1px solid #ffe0b2; padding: 8px; border-radius: 4px; font-size: 11px; margin: 0 0 8px 0; white-space: pre-wrap; word-break: break-all;"></pre>
-      <p style="font-size: 11px; color: #666; margin: 0 0 8px 0;">These files were declared in the manifest but not downloaded. This usually happens when the first track was already cached by the browser.</p>
-      <button id="fill-gaps-btn" class="primary" style="background: #e65100; margin-top: 4px;">Fill Gaps</button>
+      <p style="font-size: 11px; color: #666; margin: 0 0 8px 0;">הקבצים האלה מופיעים ברשימת הקבצים הצפויה, אך לא הורדו. בדרך כלל זה קורה כשהדפדפן כבר שמר את רצועת השמע הראשונה במטמון.</p>
+      <button id="fill-gaps-btn" class="primary" style="background: #e65100; margin-top: 4px;">השלמת קבצים חסרים</button>
     </div>
 
     <details id="validation-details">
-      <summary>Validate your download</summary>
+      <summary>בדיקת תקינות ההורדה</summary>
       <div class="validation-box">
-        <h3>1. Check duration</h3>
-        <code id="validation-command">Loading...</code>
-        <p>Expected: <strong id="expected-duration">--</strong></p>
+        <h3>1. בדיקת משך ההשמעה</h3>
+        <code id="validation-command">טוען...</code>
+        <p>משך צפוי: <strong id="expected-duration">--</strong></p>
         
-        <h3 style="margin-top: 12px;">2. Remove duplicates (if duration is too long)</h3>
-        <code id="dedup-command">Loading...</code>
-        <p style="margin-top: 8px; font-size: 11px; color: #666;">This removes files with identical content and shows the corrected duration.</p>
+        <h3 style="margin-top: 12px;">2. הסרת קבצים כפולים (אם משך ההשמעה ארוך מדי)</h3>
+        <code id="dedup-command">טוען...</code>
+        <p style="margin-top: 8px; font-size: 11px; color: #666;">פעולה זו מסירה קבצים בעלי תוכן זהה ומציגה את משך ההשמעה לאחר התיקון.</p>
       </div>
     </details>
 
-    <button id="new-download-btn" class="primary">Start New Download</button>
+    <button id="new-download-btn" class="primary">התחלת הורדה חדשה</button>
   </div>
 
   <div style="margin-top: 16px; border-top: 1px solid #eee; padding-top: 12px;">
-    <button id="download-logs-btn" class="secondary">Download Logs</button>
+    <button id="download-logs-btn" class="secondary">הורדת יומן פעילות</button>
     <p style="font-size: 11px; color: #888; margin: 8px 0 0 0;">
-      Having trouble? Download the logs and attach them to your bug report.
+      נתקלתם בבעיה? הורידו את יומן הפעילות וצרפו אותו לדיווח על התקלה.
     </p>
   </div>
 
