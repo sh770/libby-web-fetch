@@ -20,7 +20,7 @@ let expectedDuration = "";
 function toKebabCase(str) {
   return str
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/[^\p{L}\p{N}\s-]/gu, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
@@ -195,7 +195,7 @@ function showComplete(totalFiles, expectedCount, missingFiles) {
     }
     if (fillGapsBtn) {
       fillGapsBtn.disabled = false;
-      fillGapsBtn.textContent = `Fill ${missingFiles.length} Gap${missingFiles.length > 1 ? 's' : ''}`;
+      fillGapsBtn.textContent = `השלמת ${missingFiles.length} קבצים חסרים`;
     }
   } else if (gapSection) {
     gapSection.classList.add("hidden");
@@ -342,8 +342,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (btn) {
         btn.disabled = false;
         btn.textContent = currentMissingFiles.length > 0
-          ? `Fill ${currentMissingFiles.length} Gap${currentMissingFiles.length > 1 ? 's' : ''}`
-          : "Fill Gaps";
+          ? `השלמת ${currentMissingFiles.length} קבצים חסרים`
+          : "השלמת קבצים חסרים";
       }
     }
   });
