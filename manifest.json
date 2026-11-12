@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Libby Audiobook Downloader",
+  "name": "מוריד ספרי שמע מ־Libby",
   "version": "1.0.0",
-  "description": "Download audiobooks from Overdrive/Libby",
+  "description": "הורדת ספרי שמע שהושאלו דרך Libby ו־OverDrive",
   "permissions": [
     "webRequest",
     "declarativeNetRequest",
