@@ -140,7 +140,7 @@ async function init() {
     showSection("setup-section");
   } catch (error) {
     console.error("Failed to get book info:", error);
-    showError("Could not connect to page. Try refreshing the page.");
+    showError("לא ניתן להתחבר לעמוד. נסו לרענן את העמוד.");
   }
 }
 
@@ -226,7 +226,7 @@ async function startDownload() {
 
   const tab = await getCurrentTab();
   if (!tab?.id) {
-    showError("No active tab");
+    showError("לא נמצאה לשונית פעילה.");
     return;
   }
 
@@ -248,11 +248,11 @@ async function startDownload() {
       showSection("progress-section");
       updateProgress(0, 0);
     } else {
-      showError("Failed to start download");
+      showError("הפעלת ההורדה נכשלה.");
     }
   } catch (error) {
     console.error("Start download error:", error);
-    showError("Failed to start download");
+    showError("הפעלת ההורדה נכשלה.");
   }
 }
 
@@ -270,18 +270,18 @@ async function downloadLogs() {
   const btn = /** @type {HTMLButtonElement|null} */ ($("download-logs-btn"));
   if (btn) {
     btn.disabled = true;
-    btn.textContent = "Exporting...";
+    btn.textContent = "מייצא...";
   }
   try {
     const response = await chrome.runtime.sendMessage({ type: "EXPORT_LOGS" });
     console.log("[popup] Log export requested:", response);
   } catch (error) {
     console.error("Log export error:", error);
-    showError("Failed to export logs. Try again.");
+    showError("ייצוא יומן הפעילות נכשל. נסו שוב.");
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.textContent = "Download Logs";
+      btn.textContent = "הורדת יומן פעילות";
     }
   }
 }
@@ -331,14 +331,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const btn = /** @type {HTMLButtonElement} */ ($("fill-gaps-btn"));
     if (btn) {
       btn.disabled = true;
-      btn.textContent = "Filling gaps...";
+      btn.textContent = "משלים קבצים חסרים...";
     }
 
     try {
       await chrome.runtime.sendMessage({ type: "FILL_GAPS" });
     } catch (error) {
       console.error("Fill gaps error:", error);
-      showError("Failed to fill gaps. Make sure the Libby page is still open.");
+      showError("השלמת הקבצים נכשלה. ודאו שעמוד Libby עדיין פתוח.");
       if (btn) {
         btn.disabled = false;
         btn.textContent = currentMissingFiles.length > 0
