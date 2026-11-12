@@ -1,64 +1,64 @@
-# Libby Audiobook Downloader
+# מוריד ספרי שמע מ־Libby
 
-A Chrome extension to download audiobooks from Overdrive/Libby for offline listening.
+תוסף לדפדפן Chrome שמוריד ספרי שמע מ־Libby ומ־OverDrive להאזנה לא מקוונת.
 
-![Download in progress](images/in-progress-2.png)
+![ההורדה בתהליך](images/in-progress-2.png)
 
-## Installation
+## התקנה
 
-### For End Users
+### למשתמשים
 
-1. Download or clone this repository
-2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable **Developer mode** (toggle in the top right corner)
-4. Click **Load unpacked**
-5. Select the `libby-web-fetch` folder
+1. הורידו את המאגר או שכפלו אותו למחשב
+2. פתחו את Chrome ועברו לכתובת `chrome://extensions/`
+3. הפעילו את **מצב המפתחים** (Developer mode) באמצעות המתג בפינה העליונה
+4. לחצו על **טעינת תוסף לא ארוז** (Load unpacked)
+5. בחרו את תיקיית `libby-web-fetch`
 
-The extension icon will appear in your toolbar. It shows a green dot when you're on a compatible Libby audiobook page.
+סמל התוסף יופיע בסרגל הכלים. כאשר אתם נמצאים בעמוד ספר שמע תואם של Libby, יופיע לידו סימון ירוק.
 
-### Updating the Extension
+### עדכון התוסף
 
-When you pull new changes, reload the extension in Chrome:
+לאחר משיכת שינויים חדשים מהמאגר, יש לטעון מחדש את התוסף ב־Chrome:
 
 1. Open `chrome://extensions/`
-2. Find **Libby Audiobook Downloader** and click the refresh icon (↺)
-3. Refresh any open Libby tabs to pick up content script changes
+2. מצאו את **מוריד ספרי שמע מ־Libby** ולחצו על סמל הרענון (↺)
+3. רעננו גם את לשוניות Libby הפתוחות, כדי לטעון את סקריפט העמוד המעודכן
 
-## Usage
+## שימוש
 
-1. Open [Libby](https://libbyapp.com) and navigate to an audiobook you have checked out
-2. Open the audiobook player (URL will be like `*.listen.overdrive.com` or `libbyapp.com/open/loan/...`)
-3. Click the extension icon in your toolbar
+1. פתחו את [Libby](https://libbyapp.com) ועברו לספר שמע ששאלתם מהספרייה
+2. פתחו את נגן ספר השמע. כתובת העמוד תהיה בדרך כלל בצורה `*.listen.overdrive.com` or `libbyapp.com/open/loan/...`)
+3. לחצו על סמל התוסף בסרגל הכלים
 
-![Start download popup](images/start-download.png)
+![חלונית התחלת ההורדה](images/start-download.png)
 
-4. Review the book details:
-   - **Book Title**: Detected from the page
-   - **Duration**: Total audiobook length
-   - **Expected Files**: Number of audio files (parts) in the book
-   - **Download Folder Name**: Customize if desired
+4. בדקו את פרטי הספר:
+   - **שם הספר** – מזוהה אוטומטית מהעמוד
+   - **משך הספר** – משך ההשמעה הכולל
+   - **מספר קבצים צפוי** – מספר קובצי השמע (החלקים) של הספר
+   - **שם תיקיית ההורדה** – אפשר לשנות לפי הצורך
 
-5. Click **Start Download**
+5. לחצו על **התחלת הורדה**
 
-The extension will:
-- Restart the audiobook from the beginning
-- Automatically scrub through the book (advancing 15 seconds at a time)
-- Download each audio file as it's requested
+במהלך ההורדה התוסף:
+- מחזיר את הנגן לתחילת הספר
+- מתקדם אוטומטית בספר בקפיצות של 15 שניות
+- מוריד כל קובץ שמע כאשר הנגן מבקש אותו
 
-### Progress Tracking
+### מעקב אחר ההתקדמות
 
-Progress is shown both in the popup and in a banner at the top of the page:
+ההתקדמות מוצגת גם בחלונית התוסף וגם ברצועת מצב בראש עמוד הספר:
 
-![Popup progress](images/in-progress.png)
+![התקדמות בחלונית התוסף](images/in-progress.png)
 
-The on-page banner lets you close the popup and continue browsing while the download runs. It shows:
-- Number of files downloaded vs. expected
-- Percentage through the book
-- A stop button to cancel
+רצועת המצב שבעמוד מאפשרת לסגור את חלונית התוסף ולהמשיך לגלוש בזמן שההורדה נמשכת. היא מציגה:
+- כמה קבצים הורדו מתוך המספר הצפוי
+- את אחוז ההתקדמות בספר
+- כפתור לעצירת ההורדה
 
-### Downloaded Files
+### הקבצים שהורדו
 
-Files are saved to your Downloads folder in a subdirectory named after the book:
+הקבצים נשמרים בתיקיית ההורדות שלכם, בתוך תיקייה ששמה מבוסס על שם הספר:
 
 ```
 ~/Downloads/free-my-search-for-meaning/
@@ -68,90 +68,90 @@ Files are saved to your Downloads folder in a subdirectory named after the book:
   └── ...
 ```
 
-## How It Works
+## איך התוסף פועל?
 
-The extension works by intercepting the audio file requests that the Libby player makes:
+התוסף מזהה את בקשות קובצי השמע שנגן Libby שולח ומוריד את הקבצים:
 
-1. **Content Script** (`src/content.js`): Runs on Libby pages, extracts book metadata, and controls the player to scrub through the audiobook
-2. **Background Service Worker** (`src/background.js`): Intercepts network requests to audio CDN domains and triggers downloads
-3. **Popup** (`popup.html`, `src/popup.js`): User interface for starting/stopping downloads
+1. **Content Script** (`src/content.js`): פועל בעמודי Libby, מזהה את פרטי הספר ומפעיל את הנגן כדי לעבור על ספר השמע
+2. **Background Service Worker** (`src/background.js`): מאזין לבקשות רשת לשרתי השמע ומפעיל את ההורדות
+3. **Popup** (`popup.html`, `src/popup.js`): ממשק להפעלה ולעצירה של ההורדות
 
-The audio files are served from Overdrive's CDN with signed URLs that don't require additional authentication once you have a valid library loan.
+קובצי השמע מוגשים משרתי OverDrive באמצעות כתובות חתומות. לאחר השאלת ספר תקפה, אין צורך באימות נוסף כדי להוריד אותם.
 
-## Development
+## פיתוח
 
-### Prerequisites
+### דרישות מקדימות
 
-- Node.js (for type checking)
+- Node.js (לבדיקת טיפוסים)
 - pnpm (or npm/yarn)
 
-### Setup
+### התקנה
 
 ```bash
-# Install dependencies (optional, only needed for type checking)
+# התקנת התלויות (אופציונלי, נדרש רק לבדיקת טיפוסים)
 pnpm install
 ```
 
-### Project Structure
+### מבנה המאגר
 
 ```
 libby-web-fetch/
-├── manifest.json      # Extension manifest (MV3)
-├── popup.html         # Popup UI
+├── manifest.json      # הגדרות התוסף (Manifest V3)
+├── popup.html         # ממשק חלונית התוסף
 ├── src/
-│   ├── background.js  # Service worker - intercepts requests, manages downloads
-│   ├── content.js     # Content script - controls Libby player
-│   └── popup.js       # Popup logic
+│   ├── background.js  # תהליך רקע - זיהוי בקשות וניהול הורדות
+│   ├── content.js     # סקריפט עמוד - שליטה בנגן Libby
+│   └── popup.js       # לוגיקת חלונית התוסף
 ├── icons/             # Extension icons (SVG)
-└── images/            # Screenshots for README
+└── images/            # צילומי מסך למדריך
 ```
 
-### Making Changes
+### ביצוע שינויים
 
-1. Edit files in `src/` (plain JavaScript with JSDoc type annotations)
-2. Reload the extension in `chrome://extensions/` (click the refresh icon)
-3. Refresh the Libby page to pick up content script changes
+1. ערכו את הקבצים שבתיקיית `src/` (JavaScript רגיל עם הערות טיפוסים של JSDoc)
+2. טענו מחדש את התוסף דרך `chrome://extensions/` באמצעות סמל הרענון
+3. רעננו את עמוד Libby כדי לטעון את סקריפט העמוד המעודכן
 
-### Type Checking
+### בדיקת טיפוסים
 
-The project uses JSDoc annotations for TypeScript-style type checking without a build step:
+הפרויקט משתמש בהערות JSDoc כדי לבצע בדיקת טיפוסים בסגנון TypeScript, ללא צורך בתהליך בנייה:
 
 ```bash
 pnpm run check
 ```
 
-### Key Files
+### קבצים מרכזיים
 
-- **`manifest.json`**: Defines permissions, content scripts, and service worker
+- **`manifest.json`**: מגדיר הרשאות, סקריפטים לעמוד ותהליך רקע
 - **`src/background.js`**: 
-  - Listens for audio requests via `chrome.webRequest`
-  - Downloads files via `chrome.downloads`
-  - Uses `chrome.declarativeNetRequest` to block duplicate requests
+  - מאזין לבקשות שמע באמצעות `chrome.webRequest`
+  - מוריד קבצים באמצעות `chrome.downloads`
+  - משתמש ב־ `chrome.declarativeNetRequest` כדי לחסום בקשות כפולות
 - **`src/content.js`**:
-  - Extracts book info from `window.BIF` (Libby's internal state)
-  - Automates the player (restart, advance 15 seconds)
-  - Displays progress banner on the page
+  - קורא את פרטי הספר מתוך `window.BIF` (המצב הפנימי של Libby)
+  - מפעיל את הנגן אוטומטית (חזרה להתחלה והתקדמות של 15 שניות)
+  - מציג רצועת התקדמות בעמוד
 
-## Troubleshooting
+## פתרון תקלות
 
-### Downloads not starting
-- Make sure you're on an audiobook player page (`*.listen.overdrive.com` or `libbyapp.com/open/loan/...`)
-- Try refreshing the page and restarting the download
+### ההורדה לא מתחילה
+- ודאו שאתם נמצאים בעמוד של נגן ספר שמע (`*.listen.overdrive.com` or `libbyapp.com/open/loan/...`)
+- נסו לרענן את העמוד ולהפעיל מחדש את ההורדה
 
-### Missing files
-- The extension shows expected vs. actual file count
-- Some books may have slightly different counts due to how chapters are split
+### חסרים קבצים
+- התוסף מציג את מספר הקבצים הצפוי לעומת מספר הקבצים שהורדו בפועל
+- בספרים מסוימים מספר הקבצים עשוי להיות שונה מעט, בהתאם לאופן שבו הפרקים מחולקים
 
-### Duplicate files
-After download, you can remove duplicates with:
+### קבצים כפולים
+לאחר ההורדה אפשר להסיר קבצים כפולים באמצעות הפקודה הבאה:
 ```bash
 cd ~/Downloads/your-book-folder
 md5 -r *.mp3 | sort | uniq -w32 -d | cut -d' ' -f2 | xargs rm
 ```
 
-### Reporting a bug
-If a book fails to download, click **Download Logs** in the extension popup and attach the generated `.txt` file to your bug report. The logs include the spine/manifest data, scrubbing progress, and any missing files, which makes diagnosing issues much faster.
+### דיווח על תקלה
+אם הורדת ספר נכשלת, לחצו על **הורדת יומן פעילות** בחלונית התוסף וצרפו את קובץ ה־`.txt` שנוצר לדיווח על התקלה. היומן כולל את נתוני רשימת הקבצים (spine/manifest), את התקדמות המעבר בנגן ואת הקבצים החסרים. מידע זה מסייע לאבחן את התקלה.
 
-## License
+## רישיון
 
 MIT
