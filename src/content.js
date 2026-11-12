@@ -31,7 +31,7 @@ let lastLoggedPercent = -1;
 
 /** @returns {string} */
 function getBookTitle() {
-  return document.title || "Unknown Book";
+  return document.title || "ספר לא ידוע";
 }
 
 /** @returns {number} */
@@ -716,15 +716,15 @@ async function createProgressBanner() {
     <div class="lfp-left">
       <div class="lfp-spinner"></div>
       <div>
-        <div class="lfp-status">Downloading audiobook...</div>
+        <div class="lfp-status">מוריד את ספר השמע...</div>
         <div class="lfp-details">
-          <span class="lfp-files">0</span> files
+          <span class="lfp-files">0</span> קבצים שהורדו
           <span class="lfp-expected">${totalExpectedFiles > 0 ? ` / ${totalExpectedFiles} expected` : ''}</span>
           · <span class="lfp-percent">0%</span> through book
         </div>
       </div>
     </div>
-    <button class="lfp-stop">Stop</button>
+    <button class="lfp-stop">עצירה</button>
   `;
   
   document.body.appendChild(progressBanner);
@@ -770,9 +770,9 @@ function showCompleteBanner(fileCount, missingFiles) {
       ? ` (expected ${totalExpectedFiles})`
       : '';
     if (missingFiles && missingFiles.length > 0) {
-      statusEl.textContent = `Download complete — ${missingFiles.length} file(s) missing ${expectedNote}`;
+      statusEl.textContent = `ההורדה הושלמה — חסרים ${missingFiles.length} קבצים ${expectedNote}`;
     } else {
-      statusEl.textContent = `Download complete! ${fileCount} files${expectedNote}`;
+      statusEl.textContent = `ההורדה הושלמה! ${fileCount} קבצים${expectedNote}`;
     }
   }
   
@@ -781,7 +781,7 @@ function showCompleteBanner(fileCount, missingFiles) {
   
   const stopBtn = progressBanner.querySelector('.lfp-stop');
   if (stopBtn) {
-    stopBtn.textContent = 'Dismiss';
+    stopBtn.textContent = 'סגירה';
     stopBtn.addEventListener('click', removeProgressBanner);
   }
 }
