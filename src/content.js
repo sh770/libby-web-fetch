@@ -659,6 +659,8 @@ async function createProgressBanner() {
     <style>
       #libby-fetch-progress {
         position: fixed;
+        direction: rtl;
+        text-align: right;
         top: 0;
         left: 0;
         right: 0;
@@ -719,8 +721,8 @@ async function createProgressBanner() {
         <div class="lfp-status">מוריד את ספר השמע...</div>
         <div class="lfp-details">
           <span class="lfp-files">0</span> קבצים שהורדו
-          <span class="lfp-expected">${totalExpectedFiles > 0 ? ` / ${totalExpectedFiles} expected` : ''}</span>
-          · <span class="lfp-percent">0%</span> through book
+          <span class="lfp-expected">${totalExpectedFiles > 0 ? ` / ${totalExpectedFiles} צפויים` : ''}</span>
+          · <span class="lfp-percent">0%</span> התקדמות בספר
         </div>
       </div>
     </div>
