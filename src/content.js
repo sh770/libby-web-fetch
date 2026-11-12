@@ -769,7 +769,7 @@ function showCompleteBanner(fileCount, missingFiles) {
   const statusEl = progressBanner.querySelector('.lfp-status');
   if (statusEl) {
     const expectedNote = totalExpectedFiles > 0 && fileCount !== totalExpectedFiles
-      ? ` (expected ${totalExpectedFiles})`
+      ? ` (צפויים ${totalExpectedFiles})`
       : '';
     if (missingFiles && missingFiles.length > 0) {
       statusEl.textContent = `ההורדה הושלמה — חסרים ${missingFiles.length} קבצים ${expectedNote}`;
