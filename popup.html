@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -197,13 +198,14 @@
 
   <div id="not-overdrive" class="hidden">
     <p>כדי להשתמש בתוסף, יש לפתוח עמוד של ספר שמע ב־Libby או ב־OverDrive.</p>
-    <p style="font-size: 12px; color: #666;">כתובות העמוד המתאימות נראות כך: <code>*.listen.overdrive.com</code> or <code>libbyapp.com/open/loan/...</code></p>
+    <p style="font-size: 12px; color: #666;">כתובות העמוד המתאימות נראות כך: <code>*.listen.overdrive.com</code> או <code>libbyapp.com/open/loan/...</code></p>
   </div>
 
   <div id="setup-section">
     <div class="info-row">
       <div class="info-label">שם הספר</div>
-      <div class="info-value" id="שם-הספר">טוען...</div>
+      <!-- מזהה האלמנט תואם למזהה ש-popup.js מחפש -->
+      <div class="info-value" id="book-title">טוען...</div>
     </div>
 
     <div class="info-row">
@@ -262,7 +264,7 @@
         <h3>1. בדיקת משך ההשמעה</h3>
         <code id="validation-command">טוען...</code>
         <p>משך צפוי: <strong id="expected-duration">--</strong></p>
-        
+
         <h3 style="margin-top: 12px;">2. הסרת קבצים כפולים (אם משך ההשמעה ארוך מדי)</h3>
         <code id="dedup-command">טוען...</code>
         <p style="margin-top: 8px; font-size: 11px; color: #666;">פעולה זו מסירה קבצים בעלי תוכן זהה ומציגה את משך ההשמעה לאחר התיקון.</p>

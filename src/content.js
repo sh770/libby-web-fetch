@@ -29,9 +29,50 @@ let ackWaiters = new Map();
 /** @type {number} */
 let lastLoggedPercent = -1;
 
-/** @returns {string} */
+/**
+ * חילוץ שם הספר מתוך כותרת העמוד או מתוך פרטי הנגן.
+ * @returns {string}
+ */
 function getBookTitle() {
-  return document.title || "ספר לא ידוע";
+  // ניסיון ראשון: קבלת שם הספר מכותרת העמוד
+  const pageTitle = document.title?.trim();
+
+  // בדיקה שכותרת העמוד אינה ריקה או כותרת כללית של Libby
+  if (
+    pageTitle &&
+    !/^libby(\s|$)/i.test(pageTitle) &&
+    !/^overdrive(\s|$)/i.test(pageTitle)
+  ) {
+    // החזרת הכותרת לאחר הסרת שם השירות אם הוא מופיע בסופה
+    return pageTitle.replace(/\s*[-|–]\s*(Libby|OverDrive).*$/i, "").trim();
+  }
+
+  // רשימת מקומות אפשריים שבהם Libby מציגה את שם הספר
+  const selectors = [
+    '[data-testid="title"]',
+    '[data-testid="book-title"]',
+    '.title',
+    '.book-title',
+    '[class*="title"]',
+    'h1',
+  ];
+
+  // מעבר על כל האפשרויות עד למציאת שם מתאים
+  for (const selector of selectors) {
+    // חיפוש האלמנט בעמוד
+    const element = document.querySelector(selector);
+
+    // חילוץ הטקסט מתוך האלמנט
+    const title = element?.textContent?.trim();
+
+    // החזרת שם שנמצא ואינו ריק
+    if (title && title.length > 1) {
+      return title;
+    }
+  }
+
+  // ערך ברירת מחדל במקרה שלא נמצא שם
+  return "ספר לא ידוע";
 }
 
 /** @returns {number} */
@@ -632,16 +673,34 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 /**
- * Get the total number of audio files from window.BIF
- * Asks background script to read from page context using chrome.scripting
+ * קבלת מספר קובצי האודיו הצפויים מתוך נתוני הספר.
+ * במקרה של כשל בתקשורת עם ה-Background מוחזר 0 כדי לא לתקוע את החלונית.
  * @returns {Promise<number>}
  */
 function getTotalExpectedFiles() {
-  return new Promise((resolve) => {
-    chrome.runtime.sendMessage({ type: "GET_EXPECTED_FILES" }, (response) => {
-      resolve(response?.expectedFiles || 0);
+  // שליחת בקשה ל-Service Worker לקבלת מספר החלקים
+  return chrome.runtime.sendMessage({
+    type: "GET_EXPECTED_FILES",
+  })
+    .then((response) => {
+      // קריאת מספר הקבצים מהתשובה
+      const count = response?.expectedFiles;
+
+      // החזרת המספר רק אם התקבלה תשובה מספרית תקינה
+      return typeof count === "number" && Number.isFinite(count)
+        ? count
+        : 0;
+    })
+    .catch((error) => {
+      // תיעוד התקלה בלוג
+      console.error(
+        "[libby-fetch] Failed to get expected files:",
+        error
+      );
+
+      // החזרת ערך ברירת מחדל כדי לאפשר הצגת שאר פרטי הספר
+      return 0;
     });
-  });
 }
 
 /**

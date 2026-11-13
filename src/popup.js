@@ -75,74 +75,139 @@ function showSection(sectionId) {
   });
 }
 
+
+/**
+ * אתחול חלונית התוסף וקבלת פרטי הספר מעמוד Libby.
+ * במקרה של כשל בבדיקת מצב ההורדה, ממשיכים לנסות לקבל את פרטי הספר.
+ */
 async function init() {
+  // קבלת הלשונית הפעילה בדפדפן
   const tab = await getCurrentTab();
 
+  // בדיקה אם המשתמש נמצא בעמוד Libby או OverDrive
   if (!tab || !isOverdrivePage(tab.url)) {
     showSection("not-overdrive");
     return;
   }
 
-  // Check current download status
-  const status = await chrome.runtime.sendMessage({ type: "GET_STATUS" });
+  // משתנה לשמירת מצב ההורדה הנוכחי
+  let status = null;
 
-  if (status.isDownloading || status.isFillingGaps) {
-    showSection("progress-section");
-    updateProgress(status.fileCount, status.percent || 0);
-    currentKebabTitle = status.kebabTitle;
-    expectedDuration = status.expectedDuration;
-    return;
-  }
-
-  // If a download completed but the popup was closed, restore the completion view.
-  // This also handles the case where gaps were found/filled while the popup was closed.
-  if (status.fileCount > 0 && !status.isDownloading) {
-    currentKebabTitle = status.kebabTitle;
-    expectedDuration = status.expectedDuration;
-    showComplete(status.fileCount, status.expectedCount, status.missingFiles);
-    return;
-  }
-
-  // Get book info from content script
+  // ניסיון לקבל את מצב ההורדה מה-Background
   try {
+    status = await chrome.runtime.sendMessage({
+      type: "GET_STATUS",
+    });
+
+    // תיעוד התשובה שהתקבלה
+    console.log("[popup] GET_STATUS result:", status);
+  } catch (error) {
+    // תיעוד התקלה בלי לעצור את המשך האתחול
+    console.warn("[popup] GET_STATUS failed:", error);
+  }
+
+  // אם קיימת הורדה פעילה, הצגת מסך ההתקדמות
+  if (status?.isDownloading || status?.isFillingGaps) {
+    showSection("progress-section");
+    updateProgress(status.fileCount || 0, status.percent || 0);
+    currentKebabTitle = status.kebabTitle || "";
+    expectedDuration = status.expectedDuration || "";
+    return;
+  }
+
+  // אם ההורדה כבר הסתיימה, הצגת מסך הסיום
+  if (status?.fileCount > 0 && !status.isDownloading) {
+    currentKebabTitle = status.kebabTitle || "";
+    expectedDuration = status.expectedDuration || "";
+
+    showComplete(
+      status.fileCount,
+      status.expectedCount,
+      status.missingFiles
+    );
+
+    return;
+  }
+
+  // הצגת מסך ההגדרות בזמן קבלת פרטי הספר
+  showSection("setup-section");
+
+  try {
+    // בקשת פרטי הספר מ-Content Script
     const bookInfo = await chrome.tabs.sendMessage(tab.id, {
       type: "GET_BOOK_INFO",
     });
 
+    // תיעוד מלא של התשובה לצורך איתור תקלות
+    console.log("[popup] GET_BOOK_INFO result:", bookInfo);
+
+    // בדיקה שהתקבלה תשובה תקינה
+    if (!bookInfo || typeof bookInfo !== "object") {
+      throw new Error("לא התקבלה תשובה תקינה מעמוד Libby");
+    }
+
+    // חילוץ שם הספר או הצבת ערך ברירת מחדל
+    const bookTitle =
+      typeof bookInfo.title === "string" && bookInfo.title.trim()
+        ? bookInfo.title.trim()
+        : "ספר לא ידוע";
+
+    // קבלת רכיבי הממשק
     const titleEl = $("book-title");
     const durationEl = $("book-duration");
     const folderInput = /** @type {HTMLInputElement|null} */ ($("folder-name"));
     const startBtn = /** @type {HTMLButtonElement|null} */ ($("start-btn"));
 
+    // הצגת שם הספר
     if (titleEl) {
-      titleEl.textContent = bookInfo.title;
+      titleEl.textContent = bookTitle;
+    } else {
+      console.error("[popup] Element book-title was not found");
     }
 
+    // הצגת משך הספר
     if (durationEl) {
       durationEl.textContent = bookInfo.totalDurationFormatted || "--";
       expectedDuration = bookInfo.totalDurationFormatted || "";
     }
 
+    // הצגת מספר קובצי האודיו הצפויים
     const expectedFilesEl = $("expected-files");
+
     if (expectedFilesEl) {
-      expectedFilesEl.textContent = bookInfo.expectedFiles > 0 ? String(bookInfo.expectedFiles) : "--";
+      expectedFilesEl.textContent =
+        bookInfo.expectedFiles > 0
+          ? String(bookInfo.expectedFiles)
+          : "--";
     }
 
+    // מילוי אוטומטי של שם תיקיית ההורדה
     if (folderInput) {
-      folderInput.value = toKebabCase(bookInfo.title);
+      folderInput.value = toKebabCase(bookTitle);
       currentKebabTitle = folderInput.value;
     }
 
+    // הפעלת כפתור תחילת ההורדה
     if (startBtn) {
       startBtn.disabled = false;
     }
 
-    showSection("setup-section");
+    // תיעוד הצלחת טעינת פרטי הספר
+    console.log("[popup] Book information loaded:", {
+      title: bookTitle,
+      duration: expectedDuration,
+      expectedFiles: bookInfo.expectedFiles,
+    });
+
   } catch (error) {
-    console.error("Failed to get book info:", error);
-    showError("לא ניתן להתחבר לעמוד. נסו לרענן את העמוד.");
+    // תיעוד מפורט של התקלה
+    console.error("[popup] Failed to get book info:", error);
+
+    // הצגת הודעת שגיאה למשתמש
+    showError("לא ניתן לקבל את פרטי הספר. נסו לרענן את עמוד Libby ואת התוסף.");
   }
 }
+
 
 /**
  * @param {number} fileCount
